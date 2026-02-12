@@ -15,7 +15,7 @@ from rango.forms import PageForm
 def index(request):
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
-
+    
     context_dict = {}
     context_dict['boldmessage'] = 'Crunchy, creamy, cookie, candy, cupcake!'
     context_dict['categories'] = category_list
@@ -25,7 +25,8 @@ def index(request):
     #return HttpResponse("This is the home page. This is the homepage: <a href='/rango/about/'>About</a>")
 
 def about(request):
-
+    print(request.method)
+    print(request.user)
     return render(request, 'rango/about.html')
     #return HttpResponse("Rango says here is the about page. Home: <a href='/rango/'>Home</a>")
 
@@ -51,7 +52,7 @@ def add_category(request):
 
         if form.is_valid():
             form.save(commit=True)
-            return redirect('/rango/')
+            return redirect(reverse('rango:index'))
         else:
             print(form.errors)
     return render(request, 'rango/add_category.html', {'form': form})
@@ -63,7 +64,7 @@ def add_page(request, category_name_slug):
         category = None
 # You cannot add a page to a Category that does not exist...
     if category is None:
-        return redirect('/rango/')
+        return redirect(reverse('rango:index'))
     
     form = PageForm()
     if request.method == 'POST':
